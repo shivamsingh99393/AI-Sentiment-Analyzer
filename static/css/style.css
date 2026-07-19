@@ -1,0 +1,30 @@
+body{
+    background:#f4f7fc;
+}
+
+.card{
+    border:none;
+    border-radius:18px;
+}
+
+textarea{
+    resize:none;
+}
+
+.btn-primary{
+    border-radius:12px;
+    font-size:18px;
+    padding:12px;
+}
+
+.alert{
+    border-radius:15px;
+}
+
+h1{
+    font-weight:bold;
+}
+
+label{
+    font-weight:600;
+}

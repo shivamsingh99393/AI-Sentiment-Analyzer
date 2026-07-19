@@ -1,8 +1,10 @@
 from transformers import pipeline
 
-# Load AI model
-sentiment_pipeline = pipeline("sentiment-analysis")
+# Three-class sentiment model
+sentiment_pipeline = pipeline(
+    "text-classification",
+    model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+)
 
 def analyze_sentiment(text):
-    result = sentiment_pipeline(text)
-    return result
+    return sentiment_pipeline(text)
