@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review History</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">Review History</h2>
+
+    <table class="table table-bordered table-striped">
+
+        <thead class="table-dark">
+            <tr>
+                <th>Review</th>
+                <th>Sentiment</th>
+                <th>Confidence</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for review in reviews %}
+
+        <tr>
+            <td>{{ review.review }}</td>
+            <td>{{ review.sentiment }}</td>
+            <td>{{ review.confidence }}%</td>
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+</html>
