@@ -33,25 +33,38 @@
         Analyze Product Reviews & Social Media Comments using AI
     </p>
 
-    <form>
+    <form method="POST">
 
-        <div class="mb-3">
+    <div class="mb-3">
+        <label class="form-label">Enter Review</label>
 
-            <label class="form-label">
-                Enter Review
-            </label>
+        <textarea
+            class="form-control"
+            rows="5"
+            name="review"
+            placeholder="Type your review here..."
+            required></textarea>
+    </div>
 
-            <textarea class="form-control"
-                      rows="5"
-                      placeholder="Type your review here..."></textarea>
+    <button type="submit" class="btn btn-primary w-100">
+        Analyze Sentiment
+    </button>
 
-        </div>
+</form>
 
-        <button class="btn btn-primary w-100">
-            Analyze Sentiment
-        </button>
+{% if result %}
 
-    </form>
+<div class="alert alert-success mt-4">
+
+    <h4>Prediction</h4>
+
+    <p><strong>Sentiment:</strong> {{ result[0]['label'] }}</p>
+
+    <p><strong>Confidence:</strong> {{ "%.2f"|format(result[0]['score'] * 100) }}%</p>
+
+</div>
+
+{% endif %}
 
 </div>
 </div>
