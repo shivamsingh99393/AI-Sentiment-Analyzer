@@ -1,20 +1,33 @@
+import io
+import csv
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
 
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    make_response,
+)
 
 from models.sentiment_model import analyze_sentiment
 from database.mongo import reviews
 
 app = Flask(__name__)
 
+
 # ==========================
-# Home Page
+# HOME PAGE
 # ==========================
 @app.route("/", methods=["GET", "POST"])
 def home():
+
+    sentiment = None
+    confidence = None
 
     if request.method == "POST":
 
@@ -32,47 +45,45 @@ def home():
             "created_at": datetime.now()
         })
 
-        return render_template(
-            "index.html",
-            sentiment=sentiment,
-            confidence=confidence
-        )
-
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        sentiment=sentiment,
+        confidence=confidence
+    )
 
 
 # ==========================
-# History Page
+# HISTORY PAGE
 # ==========================
 @app.route("/history")
 def history():
 
     search = request.args.get("search", "")
+    sentiment = request.args.get("sentiment", "All")
+
+    query = {}
 
     if search:
+        query["review"] = {
+            "$regex": search,
+            "$options": "i"
+        }
 
-        all_reviews = list(
-            reviews.find({
-                "review": {
-                    "$regex": search,
-                    "$options": "i"
-                }
-            })
-        )
+    if sentiment != "All":
+        query["sentiment"] = sentiment
 
-    else:
-
-        all_reviews = list(reviews.find())
+    all_reviews = list(reviews.find(query))
 
     return render_template(
         "history.html",
         reviews=all_reviews,
-        search=search
+        search=search,
+        sentiment=sentiment
     )
 
 
 # ==========================
-# Dashboard
+# DASHBOARD
 # ==========================
 @app.route("/dashboard")
 def dashboard():
@@ -108,13 +119,12 @@ def dashboard():
     bar.update_layout(
         title="Sentiment Comparison",
         xaxis_title="Sentiment",
-        yaxis_title="Number of Reviews",
+        yaxis_title="Reviews",
         template="plotly_white"
     )
 
     bar_graph = bar.to_html(full_html=False)
 
-    # Recent Reviews
     recent_reviews = list(
         reviews.find()
         .sort("created_at", -1)
@@ -134,7 +144,7 @@ def dashboard():
 
 
 # ==========================
-# Upload CSV
+# CSV UPLOAD
 # ==========================
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -147,6 +157,7 @@ def upload():
 
             df = pd.read_csv(file)
 
+            # Change "review" if your CSV uses another column name
             for _, row in df.iterrows():
 
                 review = str(row["review"])
@@ -166,7 +177,44 @@ def upload():
 
 
 # ==========================
-# Run App
+# DOWNLOAD CSV REPORT
+# ==========================
+@app.route("/download")
+def download():
+
+    all_reviews = list(reviews.find())
+
+    output = io.StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Review",
+        "Sentiment",
+        "Confidence"
+    ])
+
+    for review in all_reviews:
+
+        writer.writerow([
+            review["review"],
+            review["sentiment"],
+            review["confidence"]
+        ])
+
+    response = make_response(output.getvalue())
+
+    response.headers["Content-Disposition"] = (
+        "attachment; filename=sentiment_report.csv"
+    )
+
+    response.headers["Content-Type"] = "text/csv"
+
+    return response
+
+
+# ==========================
+# RUN APP
 # ==========================
 if __name__ == "__main__":
     app.run(debug=True)
