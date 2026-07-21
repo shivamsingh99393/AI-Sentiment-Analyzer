@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentiment Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h1 class="text-center mb-4">
+        📊 AI Sentiment Analytics Dashboard
+    </h1>
+
+    <!-- KPI Cards -->
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body text-center">
+                    <h5>Total Reviews</h5>
+                    <h2>{{ total }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body text-center">
+                    <h5>😊 Positive</h5>
+                    <h2>{{ positive }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow">
+                <div class="card-body text-center">
+                    <h5>😞 Negative</h5>
+                    <h2>{{ negative }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body text-center">
+                    <h5>😐 Neutral</h5>
+                    <h2>{{ neutral }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="card shadow mt-5">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Sentiment Distribution</h4>
+        </div>
+
+        <div class="card-body">
+            {{ graph | safe }}
+        </div>
+    </div>
+
+    <!-- Recent Reviews -->
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">Recent Reviews</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-hover table-bordered">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Review</th>
+                        <th>Sentiment</th>
+                        <th>Confidence</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for review in recent_reviews %}
+
+                    <tr>
+
+                        <td>{{ review.review }}</td>
+
+                        <td>
+
+                            {% if review.sentiment=="positive" %}
+                                <span class="badge bg-success">Positive</span>
+
+                            {% elif review.sentiment=="negative" %}
+                                <span class="badge bg-danger">Negative</span>
+
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Neutral</span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>{{ review.confidence }}%</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
