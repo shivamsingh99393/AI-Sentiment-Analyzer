@@ -1,3 +1,6 @@
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+import os
 import io
 import csv
 import pandas as pd
@@ -94,7 +97,32 @@ def dashboard():
     negative = reviews.count_documents({"sentiment": "negative"})
     neutral = reviews.count_documents({"sentiment": "neutral"})
 
-    # Pie Chart
+    # ==========================
+    # WORD CLOUD
+    # ==========================
+    all_reviews = list(reviews.find())
+
+    text = " ".join(
+        review["review"]
+        for review in all_reviews
+        if review.get("review")
+    )
+
+    if text.strip():
+
+        os.makedirs("static/images", exist_ok=True)
+
+        wordcloud = WordCloud(
+            width=1000,
+            height=500,
+            background_color="white"
+        ).generate(text)
+
+        wordcloud.to_file("static/images/wordcloud.png")
+
+    # ==========================
+    # PIE CHART
+    # ==========================
     pie = px.pie(
         names=["Positive", "Negative", "Neutral"],
         values=[positive, negative, neutral],
@@ -104,7 +132,9 @@ def dashboard():
 
     graph = pie.to_html(full_html=False)
 
-    # Bar Chart
+    # ==========================
+    # BAR CHART
+    # ==========================
     bar = go.Figure()
 
     bar.add_trace(
@@ -125,6 +155,9 @@ def dashboard():
 
     bar_graph = bar.to_html(full_html=False)
 
+    # ==========================
+    # RECENT REVIEWS
+    # ==========================
     recent_reviews = list(
         reviews.find()
         .sort("created_at", -1)
@@ -141,7 +174,6 @@ def dashboard():
         bar_graph=bar_graph,
         recent_reviews=recent_reviews
     )
-
 
 # ==========================
 # CSV UPLOAD
