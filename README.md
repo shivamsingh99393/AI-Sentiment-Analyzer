@@ -186,6 +186,17 @@ Contributions are welcome.
 
 ---
 
+## 📷 Screenshots
+Ai insight.png
+Chart(1).png
+Chart(2).png
+Dashboard.png
+History.png
+Home.png
+Recent review.png
+Upload.png
+Word cloud.png
+
 ## 👨‍💻 Author
 
 **Shivam Singh**
