@@ -10,44 +10,71 @@
 
 <div class="container mt-5">
 
-    <h2 class="mb-4">Review History</h2>
+   <h2 class="mb-2">📜 Review History</h2>
+
+<p class="text-muted">
+    Total Reviews: <strong>{{ total_reviews }}</strong>
+</p>
+
+    <!-- Navigation Buttons -->
+    <div class="mb-3">
+
+        <a href="/" class="btn btn-primary">
+            🏠 Home
+        </a>
+
+        <a href="/dashboard" class="btn btn-success">
+            📊 Dashboard
+        </a>
+
+        <a href="/clear"
+           class="btn btn-danger"
+           onclick="return confirm('Delete all reviews?');">
+            🗑 Clear All
+        </a>
+
+    </div>
+
+    <!-- Search & Filter -->
     <form method="GET" action="/history" class="row g-3 mb-4">
 
-    <div class="col-md-5">
-        <input
-            type="text"
-            name="search"
-            value="{{ search }}"
-            class="form-control"
-            placeholder="Search reviews...">
-    </div>
+        <div class="col-md-5">
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                class="form-control"
+                placeholder="Search reviews...">
+        </div>
 
-    <div class="col-md-3">
-        <select name="sentiment" class="form-select">
+        <div class="col-md-3">
+            <select name="sentiment" class="form-select">
+                <option value="All">All</option>
+                <option value="positive">Positive</option>
+                <option value="negative">Negative</option>
+                <option value="neutral">Neutral</option>
+            </select>
+        </div>
 
-            <option value="All">All</option>
-            <option value="positive">Positive</option>
-            <option value="negative">Negative</option>
-            <option value="neutral">Neutral</option>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">
+                Filter
+            </button>
+        </div>
 
-        </select>
-    </div>
+    </form>
 
-    <div class="col-md-2">
-        <button class="btn btn-primary w-100">
-            Filter
-        </button>
-    </div>
-
-</form>
-
+    <!-- Table -->
     <table class="table table-bordered table-striped">
 
         <thead class="table-dark">
             <tr>
+                <th>S.No.</th>
                 <th>Review</th>
                 <th>Sentiment</th>
                 <th>Confidence</th>
+                <th>Date</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -56,9 +83,34 @@
         {% for review in reviews %}
 
         <tr>
-            <td>{{ review.review }}</td>
-            <td>{{ review.sentiment }}</td>
+
+          <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ review.review }}</td>
+
+            <td>
+                {% if review.sentiment == "positive" %}
+                    <span class="badge bg-success">Positive</span>
+                {% elif review.sentiment == "negative" %}
+                    <span class="badge bg-danger">Negative</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Neutral</span>
+                {% endif %}
+            </td>
+
             <td>{{ review.confidence }}%</td>
+            <td>
+    {{ review.created_at.strftime("%d-%m-%Y %H:%M") }}
+</td>
+
+            <td>
+                <a href="/delete/{{ review._id }}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure you want to delete this review?');">
+                    🗑️ Delete
+                </a>
+            </td>
+
         </tr>
 
         {% endfor %}
@@ -68,21 +120,6 @@
     </table>
 
 </div>
-<form method="GET" class="mb-3">
-    <div class="input-group">
-        <input
-            type="text"
-            class="form-control"
-            name="search"
-            placeholder="Search reviews..."
-            value="{{ search }}"
-        >
-
-        <button class="btn btn-primary" type="submit">
-            Search
-        </button>
-    </div>
-</form>
 
 </body>
 </html>

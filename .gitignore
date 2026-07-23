@@ -4,3 +4,32 @@ __pycache__/
 .env
 .vscode/
 .env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+venv/
+env/
+
+# Environment Variables
+.env
+
+# VS Code
+.vscode/
+
+# Python cache
+.pytest_cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
