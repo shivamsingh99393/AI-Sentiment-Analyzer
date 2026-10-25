@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Reviews | Sentiment Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light app-navbar">
+    <div class="container">
+        <a class="navbar-brand app-brand d-flex align-items-center" href="/">
+            <span class="brand-mark"><i class="bi bi-stars"></i></span>
+            Sentiment Studio
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavigation">
+            <div class="navbar-nav align-items-lg-center">
+                <a class="nav-link" href="/">Analyze</a>
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+                <a class="nav-link" href="/history">History</a>
+                <a class="nav-link active" href="/upload">Upload CSV</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="page-shell">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="page-heading">
+                <p class="eyebrow">Analyze at scale</p>
+                <h1 class="h2">Upload customer reviews</h1>
+                <p>Import a CSV file and add its reviews to your sentiment dashboard.</p>
+            </div>
+            <section class="card">
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="upload-dropzone mb-4">
+                            <span class="upload-icon"><i class="bi bi-file-earmark-spreadsheet"></i></span>
+                            <h2 class="h5 fw-bold">Choose a CSV file</h2>
+                            <p class="text-secondary mb-3">Select a file containing a <code>review</code> column.</p>
+                            <input type="file" name="file" accept=".csv,text/csv"
+                                   class="form-control" aria-label="Choose CSV file" required>
+                        </div>
+                        <button class="btn btn-primary w-100 py-2" type="submit">
+                            <i class="bi bi-cloud-arrow-up me-2"></i>Upload and analyze
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

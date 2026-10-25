@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentiment Analytics Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light app-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand app-brand d-flex align-items-center" href="/">
+            <span class="brand-mark"><i class="bi bi-stars"></i></span>
+            Sentiment Studio
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavigation">
+            <div class="navbar-nav align-items-lg-center">
+                <a class="nav-link" href="/">Analyze</a>
+                <a class="nav-link active" href="/dashboard">Dashboard</a>
+                <a class="nav-link" href="/history">History</a>
+                <a class="nav-link" href="/upload">Upload CSV</a>
+                <a class="nav-link" href="/download"><i class="bi bi-download me-1"></i>Report</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+<main class="page-shell p-0">
+
+   <!-- Dashboard Header -->
+<div class="card dashboard-hero mb-4">
+
+    <div class="card-body">
+
+        <p class="eyebrow">Workspace overview</p>
+        <h1 class="h2 fw-bold mb-2">
+            <i class="bi bi-bar-chart-line-fill text-primary me-2"></i>
+            AI Sentiment Analytics
+        </h1>
+        <p class="text-muted mb-0">
+            Understand customer feedback with clear, at-a-glance sentiment insights.
+        </p>
+
+    </div>
+
+</div>
+
+    <!-- KPI Cards -->
+    <div class="row g-4">
+
+        <div class="col-lg-3 col-md-6 mb-4">
+    <div class="card metric-card metric-total">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <p class="metric-label">Total Reviews</p>
+                <h2 class="metric-value">{{ total }}</h2>
+            </div>
+            <div class="metric-icon">
+                <i class="bi bi-chat-dots-fill"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+       <div class="col-lg-3 col-md-6 mb-4">
+    <div class="card metric-card metric-positive">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <p class="metric-label">Positive Reviews</p>
+                <h2 class="metric-value text-success">{{ positive }}</h2>
+            </div>
+            <div class="metric-icon">
+                <i class="bi bi-emoji-smile-fill"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+    <div class="card metric-card metric-negative">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <p class="metric-label">Negative Reviews</p>
+                <h2 class="metric-value text-danger">{{ negative }}</h2>
+            </div>
+            <div class="metric-icon">
+                <i class="bi bi-emoji-frown-fill"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+       <div class="col-lg-3 col-md-6 mb-4">
+    <div class="card metric-card metric-neutral">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <p class="metric-label">Neutral Reviews</p>
+                <h2 class="metric-value text-warning">{{ neutral }}</h2>
+            </div>
+            <div class="metric-icon">
+                <i class="bi bi-emoji-neutral-fill"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+
+   <!-- Pie & Bar Charts -->
+<div class="row mt-4">
+
+    <!-- Pie Chart -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-lg border-0 h-100">
+            <div class="card-header dashboard-card-header dashboard-card-header-blue">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart-fill"></i>
+                    Sentiment Distribution
+                </h5>
+            </div>
+
+            <div class="card-body">
+                {{ graph | safe }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-lg border-0 h-100">
+            <div class="card-header dashboard-card-header dashboard-card-header-green">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-fill"></i>
+                    Sentiment Comparison
+                </h5>
+            </div>
+
+            <div class="card-body">
+                {{ bar_graph | safe }}
+            </div>
+        </div>
+    </div>
+
+</div>
+    {% if trend_graph %}
+
+<div class="card shadow-lg border-0 mb-4">
+
+    <div class="card-header dashboard-card-header dashboard-card-header-dark">
+        <h5 class="mb-0">
+            <i class="bi bi-graph-up-arrow"></i>
+            Sentiment Trend Over Time
+        </h5>
+    </div>
+
+    <div class="card-body">
+        {{ trend_graph | safe }}
+    </div>
+
+</div>
+
+{% endif %}
+
+   <!-- Word Cloud & Confidence Distribution -->
+<div class="row mt-4">
+
+    <!-- Word Cloud -->
+    <div class="col-lg-6 mb-4">
+
+        <div class="card shadow-lg border-0 h-100">
+
+            <div class="card-header dashboard-card-header dashboard-card-header-cyan">
+                <h5 class="mb-0">
+                    <i class="bi bi-cloud-fill"></i>
+                    Word Cloud
+                </h5>
+            </div>
+
+            <div class="card-body text-center">
+
+                <img src="{{ url_for('static', filename='images/wordcloud.png') }}"
+                     class="img-fluid rounded"
+                     alt="Word Cloud">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Confidence Distribution -->
+    <div class="col-lg-6 mb-4">
+
+        <div class="card shadow-lg border-0 h-100">
+
+            <div class="card-header dashboard-card-header dashboard-card-header-blue">
+                <h5 class="mb-0">
+                    <i class="bi bi-bullseye"></i>
+                    Confidence Distribution
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                {% if confidence_chart %}
+                    {{ confidence_chart | safe }}
+                {% else %}
+                    <p class="text-muted text-center">
+                        No confidence data available.
+                    </p>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="card shadow mt-4">
+
+    <div class="card-header dashboard-card-header dashboard-card-header-amber">
+        <h4 class="mb-0">📈 Dashboard Summary</h4>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <h5>Total Reviews</h5>
+                <h3>{{ total }}</h3>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Positive Rate</h5>
+                <h3>{{ ((positive / total) * 100) | round(1) if total else 0 }}%</h3>
+            </div>
+
+            <div class="col-md-4">
+                <h5>Negative Rate</h5>
+                <h3>{{ ((negative / total) * 100) | round(1) if total else 0 }}%</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- AI Insight -->
+<div class="card shadow mt-4">
+
+    <div class="card-header dashboard-card-header dashboard-card-header-dark">
+        <h4 class="mb-0">🤖 AI Insight</h4>
+        <!-- Sentiment Summary -->
+<div class="card shadow mt-4">
+
+    <div class="card-header dashboard-card-header dashboard-card-header-blue">
+        <h4 class="mb-0">📊 Sentiment Summary</h4>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row text-center">
+
+            <div class="col-md-4">
+                <h5 class="text-success">😊 Positive</h5>
+                <h2>{{ positive_percent }}%</h2>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="text-danger">😞 Negative</h5>
+                <h2>{{ negative_percent }}%</h2>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="text-warning">😐 Neutral</h5>
+                <h2>{{ neutral_percent }}%</h2>
+            </div>
+            <div class="col-md-3">
+    <div class="card shadow bg-info text-white">
+        <div class="card-body text-center">
+            <h5>🎯 Avg Confidence</h5>
+            <h2>{{ average_confidence }}%</h2>
+        </div>
+    </div>
+</div>
+
+        </div>
+
+    </div>
+
+</div>
+    </div>
+
+    <div class="card-body">
+
+        <div class="alert alert-info mb-0">
+            <h5>Analysis</h5>
+            <p class="mb-0">{{ insight }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Top Reviews -->
+<div class="row mt-4">
+
+    <!-- Top Positive Review -->
+    <div class="col-md-6">
+
+        <div class="card border-success shadow">
+
+            <div class="card-header dashboard-card-header dashboard-card-header-green">
+                <h4 class="mb-0">🏆 Top Positive Review</h4>
+            </div>
+
+            <div class="card-body">
+
+                {% if top_positive %}
+
+                    <p><strong>Review:</strong></p>
+
+                    <p>{{ top_positive.review }}</p>
+
+                    <hr>
+
+                    <p>
+                        <strong>Confidence:</strong>
+                        {{ top_positive.confidence }}%
+                    </p>
+
+                {% else %}
+
+                    <p>No positive reviews available.</p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Top Negative Review -->
+    <div class="col-md-6">
+
+        <div class="card border-danger shadow">
+
+            <div class="card-header dashboard-card-header dashboard-card-header-red">
+                <h4 class="mb-0">⚠️ Top Negative Review</h4>
+            </div>
+
+            <div class="card-body">
+
+                {% if top_negative %}
+
+                    <p><strong>Review:</strong></p>
+
+                    <p>{{ top_negative.review }}</p>
+
+                    <hr>
+
+                    <p>
+                        <strong>Confidence:</strong>
+                        {{ top_negative.confidence }}%
+                    </p>
+
+                {% else %}
+
+                    <p>No negative reviews available.</p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Confidence Distribution -->
+<div class="card shadow mt-4">
+
+    <div class="card-header dashboard-card-header dashboard-card-header-blue">
+        <h4 class="mb-0">📊 Confidence Distribution</h4>
+    </div>
+
+    <div class="card-body">
+
+        {% if confidence_chart %}
+
+            {{ confidence_chart | safe }}
+
+        {% else %}
+
+            <p class="text-muted">
+                No confidence data available.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+    <!-- Recent Reviews -->
+    <div class="card shadow mt-4">
+
+        <div class="card-header dashboard-card-header dashboard-card-header-gray">
+            <h4 class="mb-0">📝 Recent Reviews</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="searchReview" class="form-label fw-semibold">Search reviews</label>
+                    <input type="text" id="searchReview" class="form-control"
+                           placeholder="Search review text...">
+                </div>
+                <div class="col-md-4">
+                    <label for="sentimentFilter" class="form-label fw-semibold">Sentiment</label>
+                    <select id="sentimentFilter" class="form-select">
+                        <option value="all">All sentiments</option>
+                        <option value="Positive">Positive</option>
+                        <option value="Negative">Negative</option>
+                        <option value="Neutral">Neutral</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Review</th>
+                        <th>Sentiment</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for review in recent_reviews %}
+
+                    <tr>
+
+                        <td>{{ review.review }}</td>
+
+                        <td>
+
+                            {% if review.sentiment == "positive" %}
+                                <span class="badge bg-success">Positive</span>
+
+                            {% elif review.sentiment == "negative" %}
+                                <span class="badge bg-danger">Negative</span>
+
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Neutral</span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>{{ review.confidence }}%</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+            </div>
+
+        </div>
+
+    </div>
+
+<hr class="mt-5">
+
+<footer class="text-center text-muted mb-3">
+    <p>
+        AI Sentiment Analytics Dashboard © 2026
+    </p>
+</footer>
+    </main>
+</div>
+<script>
+
+const searchInput = document.getElementById("searchReview");
+const filterSelect = document.getElementById("sentimentFilter");
+
+function filterReviews() {
+
+    const search = searchInput.value.toLowerCase();
+    const sentiment = filterSelect.value;
+
+    const rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+
+        const text = row.innerText.toLowerCase();
+
+        const badge = row.querySelector(".badge").innerText.trim();
+
+        const matchesSearch = text.includes(search);
+
+        const matchesFilter =
+            sentiment === "all" || badge === sentiment;
+
+        row.style.display =
+            matchesSearch && matchesFilter
+                ? ""
+                : "none";
+
+    });
+
+}
+
+searchInput.addEventListener("keyup", filterReviews);
+
+filterSelect.addEventListener("change", filterReviews);
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

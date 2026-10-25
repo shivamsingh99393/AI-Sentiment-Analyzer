@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review History | Sentiment Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light app-navbar">
+    <div class="container">
+        <a class="navbar-brand app-brand d-flex align-items-center" href="/">
+            <span class="brand-mark"><i class="bi bi-stars"></i></span>
+            Sentiment Studio
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavigation">
+            <div class="navbar-nav align-items-lg-center">
+                <a class="nav-link" href="/">Analyze</a>
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+                <a class="nav-link active" href="/history">History</a>
+                <a class="nav-link" href="/upload">Upload CSV</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="page-shell">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 page-heading">
+        <div>
+            <p class="eyebrow">Your feedback archive</p>
+            <h1 class="h2">Review history</h1>
+            <p>Browse and manage previously analyzed customer reviews.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge text-bg-light border px-3 py-2">{{ total_reviews }} reviews</span>
+            <a href="/clear" class="btn btn-outline-danger"
+               onclick="return confirm('Delete all reviews?');">
+                <i class="bi bi-trash3 me-1"></i>Clear all
+            </a>
+        </div>
+    </div>
+
+    <section class="card">
+        <div class="card-body p-3 p-md-4">
+            <form method="GET" action="/history" class="row g-3 align-items-end mb-4">
+                <div class="col-md-6">
+                    <label for="reviewSearch" class="form-label fw-semibold">Search reviews</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input id="reviewSearch" type="text" name="search" value="{{ search }}"
+                               class="form-control" placeholder="Search review text...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="sentimentFilter" class="form-label fw-semibold">Sentiment</label>
+                    <select id="sentimentFilter" name="sentiment" class="form-select">
+                        <option value="All" {% if sentiment == "All" %}selected{% endif %}>All sentiments</option>
+                        <option value="positive" {% if sentiment == "positive" %}selected{% endif %}>Positive</option>
+                        <option value="negative" {% if sentiment == "negative" %}selected{% endif %}>Negative</option>
+                        <option value="neutral" {% if sentiment == "neutral" %}selected{% endif %}>Neutral</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="bi bi-funnel me-1"></i>Apply filters
+                    </button>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Review</th>
+                            <th scope="col">Sentiment</th>
+                            <th scope="col">Confidence</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for review in reviews %}
+                        <tr>
+                            <td class="text-secondary">{{ loop.index }}</td>
+                            <td class="review-cell">{{ review.review }}</td>
+                            <td>
+                                {% if review.sentiment == "positive" %}
+                                    <span class="badge text-bg-success">Positive</span>
+                                {% elif review.sentiment == "negative" %}
+                                    <span class="badge text-bg-danger">Negative</span>
+                                {% else %}
+                                    <span class="badge text-bg-warning">Neutral</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ review.confidence }}%</td>
+                            <td class="text-nowrap">{{ review.created_at.strftime("%d-%m-%Y %H:%M") }}</td>
+                            <td>
+                                <a href="/delete/{{ review._id }}" class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Are you sure you want to delete this review?');"
+                                   aria-label="Delete review">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="py-5 text-center text-secondary">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                No reviews match these filters.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

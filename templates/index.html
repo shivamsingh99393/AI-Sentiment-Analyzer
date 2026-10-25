@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Sentiment Analytics Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light app-navbar">
+    <div class="container">
+        <a class="navbar-brand app-brand d-flex align-items-center" href="/">
+            <span class="brand-mark"><i class="bi bi-stars"></i></span>
+            Sentiment Studio
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavigation">
+            <div class="navbar-nav align-items-lg-center">
+                <a class="nav-link active" href="/">Analyze</a>
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+                <a class="nav-link" href="/history">History</a>
+                <a class="nav-link" href="/upload">Upload CSV</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="page-shell">
+    <div class="row justify-content-center">
+        <div class="col-xl-9 col-lg-10">
+            <div class="page-heading text-center">
+                <p class="eyebrow">Understand every review</p>
+                <h1>Turn customer feedback into insight</h1>
+                <p>Enter a review below to see its sentiment and confidence.</p>
+            </div>
+
+            <section class="card">
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST">
+                        <label for="review" class="form-label fw-semibold">Customer review</label>
+                        <textarea
+                            class="form-control mb-3"
+                            id="review"
+                            rows="6"
+                            name="review"
+                            placeholder="What did the customer say?"
+                            required></textarea>
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                            <span class="text-secondary small"><i class="bi bi-shield-check me-1"></i>Reviews are analyzed securely</span>
+                            <button class="btn btn-primary px-4 py-2" type="submit">
+                                <i class="bi bi-stars me-2"></i>Analyze sentiment
+                            </button>
+                        </div>
+                    </form>
+                    {% if sentiment %}
+                    <div class="analysis-result mt-4 p-4">
+                        <p class="eyebrow mb-2">Analysis result</p>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                            <h2 class="h4 mb-0 text-capitalize">{{ sentiment }}</h2>
+                            <span class="badge text-bg-primary">{{ confidence }}% confidence</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
