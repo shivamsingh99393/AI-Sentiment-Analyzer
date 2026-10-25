@@ -16,4 +16,3 @@ db = client["sentiment_db"]
 
 # Create Collection
 reviews = db["reviews"]
-print("URI:", os.getenv("MONGO_URI"))
