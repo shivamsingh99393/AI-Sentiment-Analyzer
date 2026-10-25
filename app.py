@@ -333,6 +333,8 @@ def dashboard():
         positive_percent=positive_percent,
         negative_percent=negative_percent,
         neutral_percent=neutral_percent,
+        top_positive=top_positive,
+        top_negative=top_negative,
         average_confidence=average_confidence,
         confidence_chart=confidence_chart,
     )
